@@ -16,6 +16,6 @@ defmodule CountingServer.Mixfile do
   end
 
   defp deps do
-    []
+    [{:ranch, "~> 1.3"}]
   end
 end

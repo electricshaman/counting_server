@@ -1,6 +1,4 @@
 defmodule CountingServer.Application do
-  # See http://elixir-lang.org/docs/stable/elixir/Application.html
-  # for more information on OTP Applications
   @moduledoc false
 
   use Application
@@ -8,14 +6,13 @@ defmodule CountingServer.Application do
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
-    # Define workers and child supervisors to be supervised
+    port = Application.get_env(:counting_server, :port)
+    interval = Application.get_env(:counting_server, :interval_ms)
+
     children = [
-      # Starts a worker by calling: CountingServer.Worker.start_link(arg1, arg2, arg3)
-      # worker(CountingServer.Worker, [arg1, arg2, arg3]),
+      :ranch.child_spec(:tcp_counting, 100, :ranch_tcp, [{:port, port}], CountingServer.Protocol, [interval: interval])
     ]
 
-    # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
-    # for other strategies and supported options
     opts = [strategy: :one_for_one, name: CountingServer.Supervisor]
     Supervisor.start_link(children, opts)
   end
