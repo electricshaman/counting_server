@@ -57,7 +57,16 @@ defmodule CountingServer.Protocol do
   end
 
   @doc """
-  Called when data is received on the socket.
+  Called when command to change the interval is received on the socket.
+  """
+  def handle_info({:tcp, socket, <<0xFF, interval :: 16>>}, state) do
+    state.transport.setopts(socket, [active: :once])
+    Logger.debug "Changing interval to #{interval}"
+    {:noreply, %{state | interval: interval}}
+  end
+
+  @doc """
+  Called when unknown data is received on the socket.
   """
   def handle_info({:tcp, socket, bin}, state) do
     state.transport.setopts(socket, [active: :once])
